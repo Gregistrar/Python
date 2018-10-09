@@ -135,3 +135,12 @@ def content_stacked(clean_data):
 
 type_stacked(clean_data)
 content_stacked(clean_data)
+
+
+# Density plot of Google Play Store installs of apps
+google_installs = clean_data[['installs']]
+google_installs.installs.value_counts()
+google_installs.info()
+google_installs['installs'] = google_installs['installs'].map(lambda x: ''.join([i for i in x if i.isdigit()]))
+google_installs['installs'] = google_installs['installs'].apply(pd.to_numeric)
+
