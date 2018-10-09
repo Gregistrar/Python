@@ -101,32 +101,37 @@ def google_category(df_category):
 
 google_category(df_category)
 
+def type_stacked(clean_data):
+    # df for the Google Play Store content ratings vs. paid/free
+    google_content = clean_data[['type', 'content_rating']]
+    google_content.type.value_counts()
+    google_content = google_content[~(google_content['content_rating'].isin(['Unrated', 'Adults only 18+']))]
+    google_content.info()
 
-# df for the Google Play Store content ratings vs. paid/free
-google_content = clean_data[['type', 'content_rating']]
-google_content.type.value_counts()
-google_content = google_content[~(google_content['content_rating'].isin(['Unrated', 'Adults only 18+']))]
-google_content.info()
-
-free_content = google_content[google_content['type'] == 'Free']['content_rating'].value_counts()
-paid_content = google_content[google_content['type'] == 'Paid']['content_rating'].value_counts()
-df = pd.DataFrame([free_content, paid_content])
-df.index = ['Everyone', 'Teen']
-df.plot(kind='bar', stacked=True, figsize=(9, 7))
-
-
-everyone_content = google_content[google_content['content_rating'] == 'Everyone']['type'].value_counts()
-teen_content = google_content[google_content['content_rating'] == 'Teen']['type'].value_counts()
-mature_content = google_content[google_content['content_rating'] == 'Mature 17+']['type'].value_counts()
-tenplus_content = google_content[google_content['content_rating'] == 'Everyone 10+']['type'].value_counts()
-
-df_content = pd.DataFrame([everyone_content, teen_content, mature_content, tenplus_content])
-df_content.index = ['Everyone', 'Teen', 'Mature 17+', 'Everyone 10+']
-df_content.plot(kind='bar', stacked=True, figsize=(9, 7), rot=45)
-plt.ylabel('# of Apps')
-plt.xlabel('Content Rating Type')
-title = plt.title('Google Play Store Content Ratings (Stacked Bar)', fontsize=16, fontweight='bold')
-title.set_position([.5, 1.02])
-plt.subplots_adjust(left=0.11, right=0.95, bottom=0.16)
+    free_content = google_content[google_content['type'] == 'Free']['content_rating'].value_counts()
+    paid_content = google_content[google_content['type'] == 'Paid']['content_rating'].value_counts()
+    df = pd.DataFrame([free_content, paid_content])
+    df.index = ['Everyone', 'Teen']
+    df.plot(kind='bar', stacked=True, figsize=(9, 7))
+    plt.savefig("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\Graph_outputs\\type_stacked_bar.png")
 
 
+def content_stacked(clean_data):
+    google_content = clean_data[['type', 'content_rating']]
+    everyone_content = google_content[google_content['content_rating'] == 'Everyone']['type'].value_counts()
+    teen_content = google_content[google_content['content_rating'] == 'Teen']['type'].value_counts()
+    mature_content = google_content[google_content['content_rating'] == 'Mature 17+']['type'].value_counts()
+    tenplus_content = google_content[google_content['content_rating'] == 'Everyone 10+']['type'].value_counts()
+
+    df_content = pd.DataFrame([everyone_content, teen_content, mature_content, tenplus_content])
+    df_content.index = ['Everyone', 'Teen', 'Mature 17+', 'Everyone 10+']
+    df_content.plot(kind='bar', stacked=True, figsize=(9, 7), rot=45)
+    plt.ylabel('# of Apps')
+    plt.xlabel('Content Rating Type')
+    title = plt.title('Google Play Store Content Ratings (Stacked Bar)', fontsize=16, fontweight='bold')
+    title.set_position([.5, 1.02])
+    plt.subplots_adjust(left=0.11, right=0.95, bottom=0.16)
+    plt.savefig("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\Graph_outputs\\content_stacked_bar.png")
+
+type_stacked(clean_data)
+content_stacked(clean_data)
