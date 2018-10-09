@@ -22,6 +22,7 @@ google_data.info()
 def clean_columns(df):
     df.columns = df.columns.str.replace(' ', '_')
     df.columns = [x.lower() for x in df.columns]
+    df = df[pd.notnull(df['type'])]
     print("Cleaning raw data......")
     return df
 
@@ -111,7 +112,7 @@ def type_stacked(clean_data):
     free_content = google_content[google_content['type'] == 'Free']['content_rating'].value_counts()
     paid_content = google_content[google_content['type'] == 'Paid']['content_rating'].value_counts()
     df = pd.DataFrame([free_content, paid_content])
-    df.index = ['Everyone', 'Teen']
+    df.index = ['Free', 'Paid']
     df.plot(kind='bar', stacked=True, figsize=(9, 7))
     plt.savefig("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\Graph_outputs\\type_stacked_bar.png")
 
@@ -136,11 +137,40 @@ def content_stacked(clean_data):
 type_stacked(clean_data)
 content_stacked(clean_data)
 
+# Attempt at some line density plots of category and rating
+import seaborn as sns
+sns.set(style="ticks")
 
-# Density plot of Google Play Store installs of apps
-google_installs = clean_data[['installs']]
-google_installs.installs.value_counts()
-google_installs.info()
-google_installs['installs'] = google_installs['installs'].map(lambda x: ''.join([i for i in x if i.isdigit()]))
-google_installs['installs'] = google_installs['installs'].apply(pd.to_numeric)
+categories = ['Family', 'Game', 'Tools', 'Medical', 'Business']
+google_top_category = clean_data[['category', 'rating']]
+google_top_category = google_top_category.dropna()
+google_top_category['category'] = google_top_category.category.str.replace('_', ' ')
+google_top_category['category'] = google_top_category.category.str.title()
+
+for genre in categories:
+    subset = google_top_category[google_top_category['category'] == genre]
+    sns.distplot(subset['rating'], hist=False, kde=True,
+                 kde_kws={'linewidth': 1.5},
+                 label=genre)
+
+# Plot formatting
+plt.legend(prop={'size': 10}, title='Categories')
+plt.title('Density Plot of Top 5 Categories', fontsize=14,
+          fontweight='bold')
+plt.xlabel('Google Play Store Ratings')
+plt.ylabel('Density')
+plt.savefig("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\Graph_outputs\\genre_top5_distplot.png")
+
+
+# Other density plots, top 5 categories visualized differently
+categories = ['Family', 'Game', 'Tools', 'Medical', 'Business']
+google_den_category = clean_data[['category', 'rating']]
+google_den_category = google_den_category.dropna()
+google_den_category['category'] = google_den_category.category.str.replace('_', ' ')
+google_den_category['category'] = google_den_category.category.str.title()
+density_df = google_den_category.loc[google_den_category['category'].isin(categories)]
+
+g = sns.FacetGrid(density_df, row="category",
+                  height=1.7, aspect=4,)
+g.map(sns.distplot, "rating", hist=False, rug=True)
 
