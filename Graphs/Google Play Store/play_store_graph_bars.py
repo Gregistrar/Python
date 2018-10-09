@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
 from matplotlib.ticker import FormatStrFormatter
+from matplotlib.ticker import MaxNLocator
 plt.style.use('ggplot')
 # After setting ggplot, these are the params we have started using as defaults
 plt.rcParams['font.sans-serif'] = 'Helvetica'
@@ -55,6 +56,7 @@ def ratings_hist(df):
 ratings_hist(google_ratings)
 
 
+# df for the Google Play Store categories
 google_category = clean_data[['category']]
 google_category.category.value_counts()
 google_category['freq'] = google_category.groupby('category')['category'].transform('count')
@@ -65,19 +67,66 @@ df_category['category'] = df_category.category.str.title()
 df_category.head()
 df_category
 
-# Bar chart of Google Play Store Categories
-plt.clf()
-list = df_category['category']
-y_pos = np.arange(len(list))
+def google_category(df_category):
+    # Bar chart of Google Play Store Categories
+    fig, ax1 = plt.subplots(figsize=(9, 7))
+    fig.subplots_adjust(left=0.21, right=0.95)
+    fig.canvas.set_window_title('Google Play Store Category (Bar)')
 
-plt.bar(y_pos, df_category['freq'])
-plt.xticks(y_pos, list, rotation=65)
+    list = df_category['category']
+    y_pos = np.arange(len(list))
+
+    rects = ax1.barh(y_pos, df_category['freq'],
+                     align='center',
+                     height=0.5, color='darkturquoise')
+    plt.yticks(y_pos, list)
+    ax1.set_xlim([0, 2000])
+    title = ax1.set_title('Google Play Store Category (Bar)', fontsize=16, fontweight='bold')
+    title.set_position([.5, 1.02])
+    ax1.xaxis.set_major_locator(MaxNLocator(12))
+    ax1.xaxis.grid(True, linestyle='--', which='major',
+                       color='grey', alpha=.25)
+
+    # Plot a solid vertical gridline to highlight the median position
+    ax1.axvline(1000, color='grey', alpha=0.75)
+
+    labels = df_category['freq']
+    for i, v in enumerate(labels):
+        ax1.text(v+4, i-.25, str(v), color='black', size=8)
+    plt.gca().spines['right'].set_visible(False)
+    plt.gca().spines['top'].set_visible(False)
+
+    plt.savefig("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\Graph_outputs\\category_bar.png")
 
 
+google_category(df_category)
 
 
+# df for the Google Play Store content ratings vs. paid/free
+google_content = clean_data[['type', 'content_rating']]
+google_content.type.value_counts()
+google_content = google_content[~(google_content['content_rating'].isin(['Unrated', 'Adults only 18+']))]
+google_content.info()
+
+free_content = google_content[google_content['type'] == 'Free']['content_rating'].value_counts()
+paid_content = google_content[google_content['type'] == 'Paid']['content_rating'].value_counts()
+df = pd.DataFrame([free_content, paid_content])
+df.index = ['Everyone', 'Teen']
+df.plot(kind='bar', stacked=True, figsize=(9, 7))
 
 
+everyone_content = google_content[google_content['content_rating'] == 'Everyone']['type'].value_counts()
+teen_content = google_content[google_content['content_rating'] == 'Teen']['type'].value_counts()
+mature_content = google_content[google_content['content_rating'] == 'Mature 17+']['type'].value_counts()
+tenplus_content = google_content[google_content['content_rating'] == 'Everyone 10+']['type'].value_counts()
 
+df_content = pd.DataFrame([everyone_content, teen_content, mature_content, tenplus_content])
+df_content.index = ['Everyone', 'Teen', 'Mature 17+', 'Everyone 10+']
+df_content.plot(kind='bar', stacked=True, figsize=(9, 7), rot=45)
+plt.ylabel('# of Apps')
+plt.xlabel('Content Rating Type')
+title = plt.title('Google Play Store Content Ratings (Stacked Bar)', fontsize=16, fontweight='bold')
+title.set_position([.5, 1.02])
+plt.subplots_adjust(left=0.11, right=0.95, bottom=0.16)
 
 
