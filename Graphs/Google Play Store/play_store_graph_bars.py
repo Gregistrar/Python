@@ -162,6 +162,7 @@ plt.ylabel('Density')
 plt.savefig("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\Graph_outputs\\genre_top5_distplot.png")
 
 
+
 # Other density plots, top 5 categories visualized differently
 categories = ['Family', 'Game', 'Tools', 'Medical', 'Business']
 google_den_category = clean_data[['category', 'rating']]
@@ -170,7 +171,25 @@ google_den_category['category'] = google_den_category.category.str.replace('_', 
 google_den_category['category'] = google_den_category.category.str.title()
 density_df = google_den_category.loc[google_den_category['category'].isin(categories)]
 
-g = sns.FacetGrid(density_df, row="category",
-                  height=1.7, aspect=4,)
-g.map(sns.distplot, "rating", hist=False, rug=True)
+d = {'color': ['blue', 'orange', 'green', 'red', 'purple']}
+g = sns.FacetGrid(density_df,
+                  row="category",
+                  height=1.4,
+                  aspect=2,
+                  hue_kws=d,
+                  hue='category')
+g.map(sns.distplot, "rating", hist=True, rug=False)
+g.set(xlim=(1, None))
+axes = g.axes.flatten()
+axes[0].set_title('Google Play Store - Business')
+axes[1].set_title('Google Play Store - Game')
+axes[2].set_title('Google Play Store - Family')
+axes[3].set_title('Google Play Store - Medical')
+axes[4].set_title('Google Play Store - Tools')
+axes = g.axes.flatten()
+for ax in axes:
+    ax.set_ylabel("Density")
+plt.subplots_adjust(top=0.9)
+g.fig.suptitle('Google Play Store Density Plots - Top 5 Categories', fontweight='bold')
 
+plt.savefig("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\Graph_outputs\\genre_top5_density_plot.png")
