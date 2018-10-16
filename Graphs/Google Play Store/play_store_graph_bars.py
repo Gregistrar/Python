@@ -32,7 +32,6 @@ ratings = clean_data[['rating']]
 ratings = ratings.dropna()
 ratings.rating.value_counts()
 google_ratings = ratings[ratings['rating'] <= 5.0]
-x = ratings[ratings['rating'] > 5]
 
 def ratings_hist(df):
     # Histogram plot of Google Play Store Ratings
@@ -61,7 +60,6 @@ df_category = df_category.sort_values(['freq'], ascending=False)
 df_category['category'] = df_category.category.str.replace('_', ' ')
 df_category['category'] = df_category.category.str.title()
 df_category.head()
-df_category
 
 def google_category(df_category):
     # Bar chart of Google Play Store Categories
@@ -74,10 +72,10 @@ def google_category(df_category):
 
     rects = ax1.barh(y_pos, df_category['freq'],
                      align='center',
-                     height=0.5, color='darkturquoise')
+                     height=0.5, color='turquoise')
     plt.yticks(y_pos, list)
     ax1.set_xlim([0, 2000])
-    title = ax1.set_title('Google Play Store Category (Bar)', fontsize=16, fontweight='bold')
+    title = ax1.set_title('Google Play Store: # of Apps by Category', fontsize=16, fontweight='bold')
     title.set_position([.5, 1.02])
     ax1.xaxis.set_major_locator(MaxNLocator(12))
     ax1.xaxis.grid(True, linestyle='--', which='major',
@@ -91,8 +89,49 @@ def google_category(df_category):
         ax1.text(v+4, i-.25, str(v), color='black', size=8)
     plt.gca().spines['right'].set_visible(False)
     plt.gca().spines['top'].set_visible(False)
+    plt.xlabel('# of User Ratings')
 
     plt.savefig("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\Graph_outputs\\category_bar.png")
+
+
+# df for the Google Play Store average rating categories
+rating_category = clean_data[['category', 'rating']]
+rating_category.rating.value_counts()
+rating_average = rating_category.groupby('category')['rating'].mean().reset_index()
+df_average = rating_average.sort_values(['rating'], ascending=False)
+df_average['category'] = df_average.category.str.replace('_', ' ')
+df_average['category'] = df_average.category.str.title()
+df_average.head()
+
+
+def average_category(df_average):
+    # Bar chart of Google Play Store Categories
+    fig, ax1 = plt.subplots(figsize=(9, 7))
+    fig.subplots_adjust(left=0.21, right=0.95)
+    fig.canvas.set_window_title('Google Play Store Average Category Rating')
+
+    list = df_average['category']
+    y_pos = np.arange(len(list))
+    rects = ax1.barh(y_pos, df_average['rating'],
+                     align='center',
+                     height=0.5,
+                     color='tomato')
+    plt.yticks(y_pos, list)
+    ax1.set_xlim([0, 5])
+    title = ax1.set_title('Google Play Store: Average User Rating by Category', fontsize=16, fontweight='bold')
+    title.set_position([.5, 1.02])
+    ax1.xaxis.set_major_locator(MaxNLocator(12))
+    ax1.xaxis.grid(True, linestyle='--', which='major',
+                       color='grey', alpha=.25)
+
+    labels = df_average['rating']
+    for i, v in enumerate(labels):
+        ax1.text(v+0.05, i-.25, str(round(v, 2)), color='black', size=8, fontweight='bold')
+    plt.gca().spines['right'].set_visible(False)
+    plt.gca().spines['top'].set_visible(False)
+    plt.xlabel('Average User Rating')
+
+    plt.savefig("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\Graph_outputs\\average_category_bar.png")
 
 
 def type_stacked(clean_data):
@@ -132,4 +171,4 @@ ratings_hist(google_ratings)
 google_category(df_category)
 type_stacked(clean_data)
 content_stacked(clean_data)
-
+average_category(df_average)
