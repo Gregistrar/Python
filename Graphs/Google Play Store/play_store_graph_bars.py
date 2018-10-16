@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
-from matplotlib.ticker import FormatStrFormatter
 from matplotlib.ticker import MaxNLocator
 plt.style.use('ggplot')
 # After setting ggplot, these are the params we have started using as defaults
@@ -12,7 +10,7 @@ plt.rcParams['grid.color'] = 'grey'
 plt.rcParams['grid.linewidth'] = 1
 plt.rcParams['grid.alpha'] = 0.2
 plt.rcParams["axes.edgecolor"] = "black"
-from adjustText import adjust_text
+from adjustText import adjust_text  # Used for scatterplots
 
 google_data = pd.read_csv("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\googleplaystore.csv",
                    encoding='utf-8')
@@ -42,7 +40,7 @@ def ratings_hist(df):
     plt.hist(df, 24, facecolor='green', edgecolor='gray')
     plt.ylabel('# of User Ratings')
     plt.xlabel('Google Play Store Rating')
-    title = plt.title('Google Play Store Ratings (Histogram)', fontsize=16, fontweight='bold')
+    title = plt.title('Google Play Store Ratings', fontsize=16, fontweight='bold')
     title.set_position([.5, 1.02])
     plt.axis([0, 38, 0, 2250])
     plt.gca().spines['right'].set_visible(False)
@@ -52,9 +50,6 @@ def ratings_hist(df):
                ("1", "1.5", "2", "2.5", "3", "3.5", "4", "4.5", "5"))
 
     plt.savefig("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\Graph_outputs\\ratings_histogram.png")
-
-
-ratings_hist(google_ratings)
 
 
 # df for the Google Play Store categories
@@ -100,8 +95,6 @@ def google_category(df_category):
     plt.savefig("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\Graph_outputs\\category_bar.png")
 
 
-google_category(df_category)
-
 def type_stacked(clean_data):
     # df for the Google Play Store content ratings vs. paid/free
     google_content = clean_data[['type', 'content_rating']]
@@ -134,62 +127,9 @@ def content_stacked(clean_data):
     plt.subplots_adjust(left=0.11, right=0.95, bottom=0.16)
     plt.savefig("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\Graph_outputs\\content_stacked_bar.png")
 
+
+ratings_hist(google_ratings)
+google_category(df_category)
 type_stacked(clean_data)
 content_stacked(clean_data)
 
-# Attempt at some line density plots of category and rating
-import seaborn as sns
-sns.set(style="ticks")
-
-categories = ['Family', 'Game', 'Tools', 'Medical', 'Business']
-google_top_category = clean_data[['category', 'rating']]
-google_top_category = google_top_category.dropna()
-google_top_category['category'] = google_top_category.category.str.replace('_', ' ')
-google_top_category['category'] = google_top_category.category.str.title()
-
-for genre in categories:
-    subset = google_top_category[google_top_category['category'] == genre]
-    sns.distplot(subset['rating'], hist=False, kde=True,
-                 kde_kws={'linewidth': 1.5},
-                 label=genre)
-
-# Plot formatting
-plt.legend(prop={'size': 10}, title='Categories')
-plt.title('Density Plot of Top 5 Categories', fontsize=14,
-          fontweight='bold')
-plt.xlabel('Google Play Store Ratings')
-plt.ylabel('Density')
-plt.savefig("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\Graph_outputs\\genre_top5_distplot.png")
-
-
-
-# Other density plots, top 5 categories visualized differently
-categories = ['Family', 'Game', 'Tools', 'Medical', 'Business']
-google_den_category = clean_data[['category', 'rating']]
-google_den_category = google_den_category.dropna()
-google_den_category['category'] = google_den_category.category.str.replace('_', ' ')
-google_den_category['category'] = google_den_category.category.str.title()
-density_df = google_den_category.loc[google_den_category['category'].isin(categories)]
-
-d = {'color': ['blue', 'orange', 'green', 'red', 'purple']}
-g = sns.FacetGrid(density_df,
-                  row="category",
-                  height=1.4,
-                  aspect=2,
-                  hue_kws=d,
-                  hue='category')
-g.map(sns.distplot, "rating", hist=True, rug=False)
-g.set(xlim=(1, None))
-axes = g.axes.flatten()
-axes[0].set_title('Google Play Store - Business')
-axes[1].set_title('Google Play Store - Game')
-axes[2].set_title('Google Play Store - Family')
-axes[3].set_title('Google Play Store - Medical')
-axes[4].set_title('Google Play Store - Tools')
-axes = g.axes.flatten()
-for ax in axes:
-    ax.set_ylabel("Density")
-plt.subplots_adjust(top=0.9)
-g.fig.suptitle('Google Play Store Density Plots - Top 5 Categories', fontweight='bold')
-
-plt.savefig("\\Users\ghodg\Desktop\Projects\Python\Graphs\Google Play Store\Graph_outputs\\genre_top5_density_plot.png")
