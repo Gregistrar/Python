@@ -41,7 +41,9 @@ def single_line_density(clean_data):
 
     for genre in categories:
         subset = google_top_category[google_top_category['category'] == genre]
-        g = sns.distplot(subset['rating'], hist=False, kde=True,
+        g = sns.distplot(subset['rating'],
+                         hist=False,
+                         kde=True,
                          kde_kws={'linewidth': 1.5},
                          label=genre)
 
@@ -65,7 +67,9 @@ def single_line_density_rating(clean_data):
 
     for genre in categories:
         subset = google_rating_category[google_rating_category['category'] == genre]
-        g = sns.distplot(subset['rating'], hist=False, kde=True,
+        g = sns.distplot(subset['rating'],
+                         hist=False,
+                         kde=True,
                          kde_kws={'linewidth': 1.5},
                          label=genre)
 
@@ -95,7 +99,9 @@ def multi_line_density(clean_data):
                       aspect=6,
                       hue_kws=d,
                       hue='category')
-    g.map(sns.distplot, "rating", hist=True, rug=False)
+    g.map(sns.distplot, "rating",
+          hist=True,
+          rug=False)
     g.set(xlim=(1, None))
     axes = g.axes.flatten()
     axes[0].set_title('Business Apps')
@@ -107,7 +113,8 @@ def multi_line_density(clean_data):
     for ax in axes:
         ax.set_ylabel("Density")
     plt.subplots_adjust(top=0.9)
-    g.fig.suptitle('Top 5 Categories by # of Apps', fontweight='bold')
+    g.fig.suptitle('Top 5 Categories by # of Apps',
+                   fontweight='bold')
     sns.set(rc={'figure.figsize':(11.7,8.27)})
     plt.xlabel('Google Play Store Ratings')
 
@@ -129,7 +136,9 @@ def multi_line_density_rating(clean_data):
                       aspect=6,
                       hue_kws=d,
                       hue='category')
-    g.map(sns.distplot, "rating", hist=True, rug=False)
+    g.map(sns.distplot, "rating",
+          hist=True,
+          rug=False)
     g.set(xlim=(1, None))
     axes = g.axes.flatten()
     axes[0].set_title('Events Apps')
