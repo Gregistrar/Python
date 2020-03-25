@@ -23,8 +23,8 @@ class PyCalc:
                              command=self.clear, height=2, width=10, font=self.custom_font)
         clearbut.grid(row=2, column=2)
 
-        backspace = tk.Button(self.gui, text='Back', fg='white', bg='black',
-                              command=lambda: self.press(7), height=2, width=10, font=self.custom_font)
+        backspace = tk.Button(self.gui, text='Delete', fg='white', bg='black',
+                              command=self.backspace, height=2, width=10, font=self.custom_font)
         backspace.grid(row=2, column=3)
 
         # 2nd Row Buttons
@@ -33,11 +33,11 @@ class PyCalc:
                              font=self.custom_font)
         fraction.grid(row=3, column=0)
 
-        power = tk.Button(self.gui, text=' x^2 ', fg='white', bg='black',
+        power = tk.Button(self.gui, text=' x² ', fg='white', bg='black',
                           command=lambda: self.special_functions("power"), height=2, width=10, font=self.custom_font)
         power.grid(row=3, column=1)
 
-        square = tk.Button(self.gui, text=' SqRt ', fg='white', bg='black',
+        square = tk.Button(self.gui, text=' √ ', fg='white', bg='black',
                            command=lambda: self.special_functions("sqroot"), height=2, width=10, font=self.custom_font)
         square.grid(row=3, column=2)
 
@@ -130,12 +130,16 @@ class PyCalc:
             self.equation.set(" error ")
             self.expression = ""
 
+    def backspace(self):
+        self.expression = self.expression[:-1]
+        self.equation.set(self.expression)
+
     def special_functions(self, special_func):
         if special_func == 'sqroot':
             self.expression = math.sqrt(float(self.expression))
             self.equation.set(self.expression)
         elif special_func == 'power':
-            self.expression =  math.pow(float(self.expression), 2)
+            self.expression = math.pow(float(self.expression), 2)
             self.equation.set(self.expression)
         elif special_func == 'fraction':
             self.expression = (1 / int(self.expression))
@@ -143,7 +147,8 @@ class PyCalc:
 
     def plusminus(self):
         if self.expression.startswith('-'):
-            self.expression = abs(int(self.expression))
+            self.expression = str(abs(int(self.expression)))
+            self.equation.set(self.expression)
         else:
             self.expression = '-' + self.expression
             self.equation.set(self.expression)
