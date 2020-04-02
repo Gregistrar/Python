@@ -16,7 +16,7 @@ class PyCalc:
                                font="Helvetica 14", justify='right')
         self.screen.grid(row=0, column=0, columnspan=4, padx=5, pady=1)
         self.screen.configure(state='normal')
-        self.gui.geometry("440x440")
+        self.gui.geometry("540x540")
         self.custom_font = tkinter.font.Font(family="Helvetica", weight='bold', size=10)
 
         # Top Row Buttons
