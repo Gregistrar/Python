@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import pygame as pg
+import os
 import sys
 import time
 from pygame.locals import *
@@ -97,17 +98,6 @@ def gameplay():
 
 
 gameplay()
-
-
-"""
-Pygame first attempt
-"""
-
-
-
-
-
-
 
 
 
